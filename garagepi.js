@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
-var gpio = require("pi-gpio");
+var GPIO = require("onoff").Gpio;
 var app = express();
 
 require('console-stamp')(console, '[HH:MM:ss]');
@@ -27,15 +27,14 @@ app.get('/api/clickbutton', function(req, res) {
 });
 
 function outputSequence(pin, seq, timeout) {
-  gpio.open(pin, 'output pullup', function(err) {
-    gpioWrite(pin, seq, timeout);
-  }, timeout);
+  var gpio = new GPIO(4, 'out');
+  gpioWrite(gpio, pin, seq, timeout);
 }
 
-function gpioWrite(pin, seq, timeout) {
+function gpioWrite(gpio, pin, seq, timeout) {
   if (!seq || seq.length <= 0) { 
     console.log('closing pin:', pin);
-    gpio.close(pin);
+    gpio.unexport();
     return;
   }
 
@@ -43,9 +42,8 @@ function gpioWrite(pin, seq, timeout) {
   seq = seq.substr(1);
   setTimeout(function() {
     console.log('gpioWrite, value:', value, ' seq:', seq);
-    gpio.write(pin, value, function() {
-      gpioWrite(pin, seq, timeout);
-    })
+    gpio.writeSync(value);
+    gpioWrite(gpio, pin, seq, timeout);
   }, timeout);
 }
 
