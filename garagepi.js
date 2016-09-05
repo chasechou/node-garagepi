@@ -1,9 +1,12 @@
-var express = require('express');
 var path = require('path');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var GPIO = require("onoff").Gpio;
+var express = require('express');
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+var startTakingSnaps = false;
 
 require('console-stamp')(console, '[HH:MM:ss]');
 
@@ -54,20 +57,39 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-var autoSnapshot = setInterval(function() {
-  var imgPath = path.join(__dirname, 'public/images');
-  var cmd = 'raspistill -w 640 -h 480 -q 80 -o ' + imgPath + '/garage.jpg';
-  var exec = require('child_process').exec;
-  exec(cmd, function (error, stdout, stderr) {
-    if (error !== null) {
-      console.log('exec error: ' + error);
-      return;
-    }
-    console.log('snapshot created...');
+function takeSnaps() {
+  var autoSnapshot = setTimeout(function() {
+    var imgPath = path.join(__dirname, 'public/images');
+    var cmd = 'raspistill -w 640 -h 480 -q 80 -o ' + imgPath + '/garage.jpg';
+    var exec = require('child_process').exec;
+    exec(cmd, function (error, stdout, stderr) {
+      if (error !== null) {
+        console.log('exec error: ' + error);
+        return;
+      }
+      io.emit('snapshot', 'ready');
+      console.log('snapshot created...');
+      if(startTakingSnaps) {
+        takeSnaps();
+      }
+    });
+  }, 0);
+
+  return autoSnapshot;
+}
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+  startTakingSnaps = true;
+  takeSnaps();
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+    startTakingSnaps = false;
   });
-}, 30000);
+});
 
 var port = process.env.PORT || 3000;
-app.listen(port, function() {
+server.listen(port, function() {
   console.log('GaragePi listening on port:', port);
 });
