@@ -89,7 +89,7 @@ io.on('connection', function(socket){
   });
 });
 
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 server.listen(port, function() {
   console.log('GaragePi listening on port:', port);
 });
