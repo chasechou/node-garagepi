@@ -23,10 +23,21 @@ app.get('/', function(req, res) {
   res.render('index.html');
 });
 
+var state = 'closed';
 app.get('/api/clickbutton', function(req, res) {
+  state = state == 'closed' ? 'open' : 'closed';
+
+  // hardcode to closed for now until reed switch
+  state = 'closed';
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ status: 'done' }));
+  res.end(state);
   outputSequence(7, '10', 1000);
+});
+
+app.get('/api/status', function(req, res) {
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ state: state }));
+  console.log('returning state: ' + state);
 });
 
 function outputSequence(pin, seq, timeout) {

@@ -1,0 +1,20 @@
+{
+    "bridge": {
+        "name": "GaragePi",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "029-19-022"
+    },
+    
+    "description": "Home-made raspberry pi HomeKit.",
+
+    "accessories": [
+        {
+            "accessory": "Httpdoor",
+            "name": "Garage Door",
+            "controlURL": "http://192.168.1.60:8000/api/clickbutton",
+            "statusURL": "http://192.168.1.60:8000/api/status"
+        }
+    ]
+
+}
