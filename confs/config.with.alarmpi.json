@@ -1,0 +1,38 @@
+{
+    "bridge": {
+        "name": "Raspberry Pi Homebridge",
+        "username": "CC:22:3D:E3:CE:30",
+        "port": 51826,
+        "pin": "029-19-022"
+    },
+    
+    "description": "Home-made raspberry pi HomeKit.",
+
+    "accessories": [
+        {
+            "accessory": "Httpdoor",
+            "name": "Garage Door",
+            "controlURL": "http://192.168.1.60:8000/api/clickbutton",
+            "statusURL": "http://192.168.1.60:8000/api/status"
+        },
+	{
+	    "accessory": "Http-SecuritySystem",
+	    "name": "Alarm System",
+	    "auth": {
+		"username": "",
+		"password": "",
+		"immediately": false
+	    },
+	    "http_method": "GET",
+	    "urls": {
+		"stay": { "url": "http://192.168.1.65:8000/api/click_home", "body": "home" },
+		"away": { "url": "http://192.168.1.65:8000/api/click_away", "body": "away" },
+		"night": { "url": "http://192.168.1.65:8000/api/click_off", "body": "standby" },
+		"disarm": { "url": "http://192.168.1.65:8000/api/click_off", "body": "off" },
+		"readCurrentState": { "url": "http://192.168.1.65:8000/api/check", "body": "current_state" },
+		"readTargetState": { "url": "http://192.168.1.65:8000/api/check", "body": "target_state" }
+	    }
+	}
+    ]
+
+}
