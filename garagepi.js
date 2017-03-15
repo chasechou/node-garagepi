@@ -71,7 +71,9 @@ app.use(function(req, res, next) {
 function takeSnaps() {
   var autoSnapshot = setTimeout(function() {
     var imgPath = path.join(__dirname, 'public/images');
-    var cmd = 'raspistill -vf -hf -w 640 -h 480 -q 80 -o ' + imgPath + '/garage.jpg';
+    var archiveScript = path.resolve(__dirname, 'take_snap_archive_deploy');
+    // var script = archiveScript && archiveScript.length > 0 ? archiveScript : 'raspistill -vf -hf -w 640 -h 480 -q 80 -o';
+    var cmd = archiveScript + ' ' + imgPath + '/garage.jpg';
     var exec = require('child_process').exec;
     exec(cmd, function (error, stdout, stderr) {
       if (error !== null) {
