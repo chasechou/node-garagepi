@@ -21,8 +21,17 @@ garage_dest=$1
 # if the drive is mounted - set the archive dir to that.
 # otherwise revert to a local storage
 if [ -f "${MOUNTED_DRIVE}/test-file" ]; then
+  echo "Drive is mounted"
   ARCHIVE="${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
+  if [ -d "${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/" ]; then
+    echo "destination directory exists doing nothing"
+  else
+    echo "destination directory does not exists running command: mkdir -p ${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/"
+    mkdir -p ${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/
+  fi
+
 else
+  echo "No mounted drive detected - defaulting to tmp dir"
   ARCHIVE="/home/pi/tmp/garage_images/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
 fi
 
@@ -41,6 +50,8 @@ fi
 #
 # have raspberry pi take the image
 raspistill -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
+
+echo "running command: cp ${garage_dest} ${ARCHIVE} "
 
 #archive the created image
 cp "${garage_dest}" "${ARCHIVE}"
