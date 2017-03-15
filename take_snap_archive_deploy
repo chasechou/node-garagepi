@@ -1,0 +1,46 @@
+#!/bin/sh
+#############################################################
+# Auther: Matthew Zygowicz
+# Filename: take_snap_archive_deploy
+# Usage: take_snap_archive_deploy [destination]
+# Example: take_snap_archive_deploy /tmp/image/garageImg.png
+#############################################################
+
+DEBUG=1
+
+# Runs the following as a root cronjob every 5 minutes
+#sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o username=<USERNAME>,password=<PASSWORD>
+
+MOUNTED_DRIVE='/mnt/gemini/garage'
+DATE_DIR=$(date +%Y-%m)
+DAY_DIR=$(date +%d)
+ARCHIVE_IMG_NAME=$(date +"%H:%M")
+garage_dest = $1
+
+
+# if the drive is mounted - set the archive dir to that.
+# otherwise revert to a local storage
+if [ -f "${MOUNTED_DRIVE}/test-file" ]; then
+  ARCHIVE="${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
+else
+  ARCHIVE="/home/pi/tmp/garage_images/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
+fi
+
+
+if [[ DEBUG -eq 1 ]]; then
+  echo "${ARCHIVE}"
+  exit
+fi
+
+
+#
+# # call this command to create the directory if it does not exist
+# mkdir -p "${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}"
+#
+# #@TODO should we check to see if drive is mounted?
+#
+# # have raspberry pi take the image
+# raspistill -vf -hf -w 640 -h 480 -q 80 -o "$garage_dest"
+#
+# #archive the created image
+# cp "${garage_dest}" "${ARCHIVE}"
