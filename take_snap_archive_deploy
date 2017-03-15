@@ -27,7 +27,7 @@ else
 fi
 
 
-if [[ $DEBUG -eq 1 ]]; then
+if [ $DEBUG -eq 1 ]; then
   echo "${ARCHIVE}"
   exit
 fi
@@ -39,8 +39,8 @@ fi
 #
 # #@TODO should we check to see if drive is mounted?
 #
-# # have raspberry pi take the image
-# raspistill -vf -hf -w 640 -h 480 -q 80 -o "$garage_dest"
-#
-# #archive the created image
-# cp "${garage_dest}" "${ARCHIVE}"
+# have raspberry pi take the image
+raspistill -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
+
+#archive the created image
+cp "${garage_dest}" "${ARCHIVE}"
