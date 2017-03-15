@@ -9,7 +9,7 @@
 DEBUG=1
 
 # Runs the following as a root cronjob every 5 minutes
-#sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o uid=<UNIXUSER>,gid=<UNIXGROUP> username=<USERNAME>,password=<PASSWORD>
+#sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o uid=<UNIXUSER>,gid=<UNIXGROUP>username=<USERNAME>,password=<PASSWORD>
 
 MOUNTED_DRIVE='/mnt/gemini/garage'
 DATE_DIR=$(date +%Y-%m)
@@ -42,14 +42,8 @@ if [ $DEBUG -eq 1 ]; then
 fi
 
 
-#
-# # call this command to create the directory if it does not exist
-# mkdir -p "${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}"
-#
-# #@TODO should we check to see if drive is mounted?
-#
 # have raspberry pi take the image
-raspistill -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
+(. raspistill -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}")
 
 echo "running command: cp ${garage_dest} ${ARCHIVE} "
 
