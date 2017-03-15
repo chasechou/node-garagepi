@@ -6,7 +6,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var startTakingSnaps = false;
+var startTakingSnaps = true;
 
 require('console-stamp')(console, '[HH:MM:ss]');
 
@@ -74,6 +74,7 @@ function takeSnaps() {
     var archiveScript = path.resolve(__dirname, 'take_snap_archive_deploy');
     // var script = archiveScript && archiveScript.length > 0 ? archiveScript : 'raspistill -vf -hf -w 640 -h 480 -q 80 -o';
     var cmd = archiveScript + ' ' + imgPath + '/garage.jpg';
+    console.log('running command: ' + cmd);
     var exec = require('child_process').exec;
     exec(cmd, function (error, stdout, stderr) {
       if (error !== null) {
@@ -86,23 +87,24 @@ function takeSnaps() {
         takeSnaps();
       }
     });
-  }, 0);
+  }, 5000);
 
   return autoSnapshot;
 }
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  startTakingSnaps = true;
+  // startTakingSnaps = true;
   takeSnaps();
 
-  socket.on('disconnect', function(){
-    console.log('user disconnected');
-    startTakingSnaps = false;
-  });
+  // socket.on('disconnect', function(){
+  //   console.log('user disconnected');
+  //   startTakingSnaps = false;
+  // });
 });
 
 var port = process.env.PORT || 8000;
 server.listen(port, function() {
   console.log('GaragePi listening on port:', port);
+  takeSnaps();
 });
