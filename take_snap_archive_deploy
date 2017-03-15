@@ -15,7 +15,7 @@ MOUNTED_DRIVE='/mnt/gemini/garage'
 DATE_DIR=$(date +%Y-%m)
 DAY_DIR=$(date +%d)
 ARCHIVE_IMG_NAME=$(date +"%H:%M")
-garage_dest = $1
+garage_dest=$1
 
 
 # if the drive is mounted - set the archive dir to that.
@@ -27,7 +27,7 @@ else
 fi
 
 
-if [[ DEBUG -eq 1 ]]; then
+if [[ $DEBUG -eq 1 ]]; then
   echo "${ARCHIVE}"
   exit
 fi
