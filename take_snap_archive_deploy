@@ -38,14 +38,14 @@ fi
 
 if [ $DEBUG -eq 1 ]; then
   echo "${ARCHIVE}"
-  exit
+  # exit
 fi
 
-alias exit=return
 # have raspberry pi take the image
-. raspistill -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
-unalias exit
-echo "running command: cp ${garage_dest} ${ARCHIVE} "
+echo "running command: raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o ${garage_dest}"
+raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
+
 
 #archive the created image
+echo "running command: cp ${garage_dest} ${ARCHIVE} "
 cp "${garage_dest}" "${ARCHIVE}"
