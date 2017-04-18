@@ -4,6 +4,7 @@
 # Filename: take_snap_archive_deploy
 # Usage: take_snap_archive_deploy [destination]
 # Example: take_snap_archive_deploy /tmp/image/garageImg.png
+# Dependencies: raspistill - imagemagick
 #############################################################
 
 DEBUG=1
@@ -12,6 +13,8 @@ DEBUG=1
 #sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o uid=<UNIXUSER>,gid=<UNIXGROUP>username=<USERNAME>,password=<PASSWORD>
 
 MOUNTED_DRIVE='/mnt/gemini/garage'
+DATE=$(date +"%d/%m/%Y")
+HOUR=$(date +"%R")
 DATE_DIR=$(date +%Y-%m)
 DAY_DIR=$(date +%d)
 ARCHIVE_IMG_NAME=$(date +"%H_%M_%S")
@@ -42,8 +45,17 @@ if [ $DEBUG -eq 1 ]; then
 fi
 
 # have raspberry pi take the image
-echo "running command: raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o ${garage_dest}"
-raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o "${garage_dest}"
+echo "running command: raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o /tmp/garage.png"
+raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o "/tmp/garage.png"
+
+convert "/tmp/garage.png" -font FreeSerif  \
+   -pointsize 14 -fill white -annotate +670+590  \
+   $DATE \
+   -pointsize 14 -fill white -annotate +750+590  \
+   $HOUR \
+   -pointsize 14 -draw "gravity southwest \
+   fill white text 15,6 'Garage Pi Cam by Matthew Zygowicz' " \
+$garage_dest
 
 
 #archive the created image
