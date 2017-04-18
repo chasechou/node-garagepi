@@ -13,7 +13,7 @@ DEBUG=1
 #sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o uid=<UNIXUSER>,gid=<UNIXGROUP>username=<USERNAME>,password=<PASSWORD>
 
 MOUNTED_DRIVE='/mnt/gemini/garage'
-DATE=$(date +"%d/%m/%Y")
+DATE=$(date +"%m/%d/%Y")
 HOUR=$(date +"%R")
 DATE_DIR=$(date +%Y-%m)
 DAY_DIR=$(date +%d)
@@ -49,10 +49,8 @@ echo "running command: raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o /tmp/g
 raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o "/tmp/garage.png"
 
 convert "/tmp/garage.png" -font FreeSerif  \
-   -pointsize 14 -fill white -annotate +670+590  \
-   $DATE \
-   -pointsize 14 -fill white -annotate +750+590  \
-   $HOUR \
+   -pointsize 14 -draw "gravity southeast \
+   fill white text 15,6 \"${DATE} - ${HOUR}\" " \
    -pointsize 14 -draw "gravity southwest \
    fill white text 15,6 'Garage Pi Cam by Matthew Zygowicz' " \
 $garage_dest
