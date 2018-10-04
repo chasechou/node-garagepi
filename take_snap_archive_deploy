@@ -1,0 +1,61 @@
+#!/bin/sh
+#############################################################
+# Auther: Matthew Zygowicz
+# Filename: take_snap_archive_deploy
+# Usage: take_snap_archive_deploy [destination]
+# Example: take_snap_archive_deploy /tmp/image/garageImg.png
+# Dependencies: raspistill - imagemagick
+#############################################################
+
+DEBUG=1
+
+# Runs the following as a root cronjob every 5 minutes
+#sudo mount -t cifs //<NETWORK_COMPUTED>/<PATH> /mnt/gemini/garage -o uid=<UNIXUSER>,gid=<UNIXGROUP>username=<USERNAME>,password=<PASSWORD>
+
+MOUNTED_DRIVE='/mnt/gemini/garage'
+DATE=$(date +"%m/%d/%Y")
+HOUR=$(date +"%R")
+DATE_DIR=$(date +%Y-%m)
+DAY_DIR=$(date +%d)
+ARCHIVE_IMG_NAME=$(date +"%H_%M_%S")
+garage_dest=$1
+
+
+# if the drive is mounted - set the archive dir to that.
+# otherwise revert to a local storage
+if [ -f "${MOUNTED_DRIVE}/test-file" ]; then
+  echo "Drive is mounted"
+  ARCHIVE="${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
+  if [ -d "${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/" ]; then
+    echo "destination directory exists doing nothing"
+  else
+    echo "destination directory does not exists running command: mkdir -p ${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/"
+    mkdir -p ${MOUNTED_DRIVE}/${DATE_DIR}/${DAY_DIR}/
+  fi
+
+else
+  echo "No mounted drive detected - defaulting to tmp dir"
+  ARCHIVE="/home/pi/tmp/garage_images/${DATE_DIR}/${DAY_DIR}/${ARCHIVE_IMG_NAME}.png"
+fi
+
+
+if [ $DEBUG -eq 1 ]; then
+  echo "${ARCHIVE}"
+  # exit
+fi
+
+# have raspberry pi take the image
+echo "running command: raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o /tmp/garage.png"
+raspistill -ex auto -vf -hf -w 640 -h 480 -q 80 -o "/tmp/garage.png"
+
+convert "/tmp/garage.png" -font FreeSerif  \
+   -pointsize 14 -draw "gravity southeast \
+   fill white text 15,6 \"${DATE} - ${HOUR}\" " \
+   -pointsize 14 -draw "gravity southwest \
+   fill white text 15,6 'Garage Pi Cam by Matthew Zygowicz' " \
+$garage_dest
+
+
+#archive the created image
+echo "running command: cp ${garage_dest} ${ARCHIVE} "
+cp "${garage_dest}" "${ARCHIVE}"
