@@ -24,14 +24,40 @@ app.get('/', function(req, res) {
 });
 
 var state = 'closed';
-app.get('/api/clickbutton', function(req, res) {
-  state = state == 'closed' ? 'open' : 'closed';
 
-  // hardcode to closed for now until reed switch
-  state = 'closed';
+app.get('/api/clickbutton', function(req, res) {
+  outputSequence(7, '10', 1000);
+  state = state == 'open' ? 'closed' : 'open';
+  console.log(`action: clickbutton  state: ${state}`);
   res.setHeader('Content-Type', 'application/json');
   res.end(state);
-  outputSequence(7, '10', 1000);
+});
+
+app.get('/api/openclose', function(req, res) {
+  let body = ''; 
+  if(req.query.state !== 'status') {
+    // only do action if not already in desired state
+    if((req.query.state == 'on' && state == 'closed') ||
+       (req.query.state == 'off' && state == 'open')) {
+      outputSequence(7, '10', 1000);
+      state = req.query.state == 'on' ? 'open' : 'closed';
+      console.log(`action: openclose  state: ${state}`);
+    }
+  }
+  body = state;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(state);
+});
+
+app.get('/api/sensor', function(req, res) {
+  let body = ''; 
+  if(req.query.state !== 'status') {
+    state = req.query.state == 'on' ? 'open' : 'closed';
+  }
+  body = state;
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(state);
 });
 
 app.get('/api/status', function(req, res) {
