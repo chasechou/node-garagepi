@@ -27,7 +27,6 @@ var state = 'closed';
 
 app.get('/api/clickbutton', function(req, res) {
   outputSequence(7, '10', 1000);
-  state = state == 'open' ? 'closed' : 'open';
   console.log(`action: clickbutton  state: ${state}`);
   res.setHeader('Content-Type', 'application/json');
   res.end(state);
