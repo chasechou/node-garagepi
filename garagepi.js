@@ -8,7 +8,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var startTakingSnaps = false;
 
-require('console-stamp')(console, '[HH:MM:ss]');
+require('console-stamp')(console, 'yyyy/mm/dd HH:MM:ss');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
