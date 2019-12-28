@@ -23,37 +23,31 @@ app.get('/', function(req, res) {
   res.render('index.html');
 });
 
-var state = 'closed';
+let state = 'closed';
 
 app.get('/api/clickbutton', function(req, res) {
-  outputSequence(7, '10', 1000);
   console.log(`action: clickbutton  state: ${state}`);
+  outputSequence(7, '10', 1000);
   res.setHeader('Content-Type', 'application/json');
   res.end(state);
 });
 
 app.get('/api/openclose', function(req, res) {
-  let body = ''; 
-  if(req.query.state !== 'status') {
-    // only do action if not already in desired state
-    if((req.query.state == 'on' && state == 'closed') ||
-       (req.query.state == 'off' && state == 'open')) {
-      outputSequence(7, '10', 1000);
-      state = req.query.state == 'on' ? 'open' : 'closed';
-      console.log(`action: openclose  state: ${state}`);
-    }
+  if((req.query.state === 'on' && state === 'closed') ||
+     (req.query.state === 'off' && state === 'open')) {
+    outputSequence(7, '10', 1000);
+    state = req.query.state === 'on' ? 'open' : 'closed';
+    console.log(`action: openclose  state: ${state}`);
+  } else {
+    console.log(`action: openclose  ${req.query.state} already matches current state`);
   }
-  body = state;
   res.setHeader('Content-Type', 'application/json');
   res.end(state);
 });
 
 app.get('/api/sensor', function(req, res) {
-  let body = ''; 
-  if(req.query.state !== 'status') {
-    state = req.query.state == 'on' ? 'open' : 'closed';
-  }
-  body = state;
+  state = req.query.state === 'on' ? 'open' : 'closed';
+  console.log(`action: sensor  state: ${state}`);
 
   res.setHeader('Content-Type', 'application/json');
   res.end(state);
@@ -61,8 +55,8 @@ app.get('/api/sensor', function(req, res) {
 
 app.get('/api/status', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ state: state }));
-  console.log('returning state: ' + state);
+  //console.log(`action: status  state: ${state}`);
+  res.end(state);
 });
 
 function outputSequence(pin, seq, timeout) {
