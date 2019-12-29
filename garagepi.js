@@ -14,7 +14,17 @@ require('console-stamp')(console, 'yyyy/mm/dd HH:MM:ss');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 
-app.use(logger('dev', {
+function customLog(tokens, req, res) {
+  return [
+    '[' + tokens.date(req, res, 'clf') + ']',
+    '"' + tokens.method(req, res),
+    tokens.url(req, res) + ' HTTP/' + tokens['http-version'](req, res) + '"',
+    tokens.status(req, res),
+    tokens.res(req, res, 'content-length')
+  ].join(' ')
+}
+
+app.use(logger(customLog, {
   skip: function(req, res) {
     // don't bother logging status requests as they are too frequent
     if(req.query.state === 'status') return true;
