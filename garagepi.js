@@ -14,7 +14,12 @@ require('console-stamp')(console, 'yyyy/mm/dd HH:MM:ss');
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('ejs').renderFile);
 
-app.use(logger('dev'));
+app.use(logger('dev', {
+  skip: function(req, res) {
+    // don't bother logging status requests as they are too frequent
+    if(req.query.state === 'status') return true;
+  }
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
