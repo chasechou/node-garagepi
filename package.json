@@ -9,7 +9,7 @@
     "console-stamp": "^0.2.9",
     "debug": "^4.1.1",
     "ejs": "^3.0.1",
-    "express": "^4.14.0",
+    "express": "^4.17.3",
     "morgan": "^1.9.1",
     "onoff": "^5.0.1",
     "socket.io": "^2.3.0"
